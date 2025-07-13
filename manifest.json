@@ -2,7 +2,7 @@
   "name": "Focus Hero",
   "short_name": "FocusHero",
   "description": "A gamified focus timer app with stats, XP and motivational messages.",
-  "start_url": "https://focushero.vercel.app/",
+  "start_url": "https://focus-hero.vercel.app/",
   "display": "standalone",
   "background_color": "#121212",
   "theme_color": "#1f1f1f",
