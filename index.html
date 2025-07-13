@@ -8,9 +8,9 @@
   <!-- PWA: Manifest & Icons -->
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#1e1e1e" />
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Focus Hero">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Focus Hero" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
 
   <link rel="stylesheet" href="style.css" />
@@ -18,11 +18,14 @@
 <body>
   <div class="container">
     <h1>
-  <img src="icons/icon-192.png" alt="Focus Hero Logo" style="height: 40px; vertical-align: middle; margin-right: 8px;">
-  Focus Hero
-</h1>
+      <img
+        src="icons/icon-192.png"
+        alt="Focus Hero Logo"
+        style="height: 40px; vertical-align: middle; margin-right: 8px;"
+      />
+      Focus Hero
+    </h1>
 
-    
     <div class="timer-container">
       <div id="timer">25:00</div>
       <div id="status">Bereit</div>
@@ -55,6 +58,13 @@
       <button id="showSettings" class="menu-button">⚙️ Einstellungen</button>
     </div>
 
+    <!-- Premium Button / Info -->
+    <div id="premiumContainer" style="margin-top: 10px; text-align:center;">
+      <button id="buyPremiumBtn" class="menu-button" style="background: gold; color: black;">
+        ⭐ Premium freischalten (2,99€)
+      </button>
+    </div>
+
     <!-- Statistik -->
     <div id="statsContainer" class="panel" style="display: none;">
       <h2>📈 Deine Statistik</h2>
@@ -85,6 +95,18 @@
       <menu>
         <button id="cancelCustom" type="reset">Abbrechen</button>
         <button id="saveCustom" type="submit">Speichern</button>
+      </menu>
+    </form>
+  </dialog>
+
+  <!-- Premium Hinweis Dialog -->
+  <dialog id="premiumDialog">
+    <form method="dialog">
+      <h3>🔒 Premium-Funktion</h3>
+      <p>Diese Funktion ist nur in der Premium-Version verfügbar.<br />Willst du Premium freischalten?</p>
+      <menu>
+        <button id="premiumCancel" type="reset">Abbrechen</button>
+        <button id="premiumBuy" type="submit">Jetzt Premium kaufen</button>
       </menu>
     </form>
   </dialog>

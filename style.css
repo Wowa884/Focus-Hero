@@ -214,3 +214,30 @@ dialog button {
   background-color: #00e676;
   color: #000;
 }
+
+/* Premium Button (optional) */
+#buyPremiumBtn {
+  font-weight: bold;
+  box-shadow: 0 0 8px gold;
+  transition: box-shadow 0.3s ease;
+}
+
+#buyPremiumBtn:hover {
+  box-shadow: 0 0 16px gold;
+}
+
+/* Premium Hinweis Dialog (optional) */
+#premiumDialog {
+  background: #292929;
+  border: 2px solid gold;
+  color: gold;
+}
+
+/* Premium Features verstecken, nur sichtbar wenn Premium aktiv */
+.premium-feature {
+  display: none;
+}
+
+body.premium-active .premium-feature {
+  display: block;
+}

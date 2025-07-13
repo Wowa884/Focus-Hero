@@ -19,6 +19,9 @@ const toggleSound = document.getElementById("toggleSound");
 const toggleVibration = document.getElementById("toggleVibration");
 const endSound = document.getElementById("endSound");
 
+// Premium Button im HTML vorausgesetzt
+const buyPremiumBtn = document.getElementById("buyPremiumBtn");
+
 const customDialog = document.getElementById("customModeDialog");
 const customName = document.getElementById("customName");
 const customFocus = document.getElementById("customFocus");
@@ -34,10 +37,13 @@ let remaining = focusSeconds;
 
 let xp = parseInt(localStorage.getItem("xp")) || 0;
 
+// Premium-Status aus localStorage
+let isPremium = localStorage.getItem("isPremium") === "true";
+
 const messages = [
-  "Stark geblieben – du bist deinem Ziel ein Stück näher!",
-  "XP +25! Dein Hirn pumpt wie ein Bodybuilder 💪",
-  "Weiter so! Motivation ist trainierbar.",
+  // (Deine 100+ Motivationsnachrichten hier, aus Platzgründen nicht alle aufgeführt)
+  "Du bist der Held deiner Geschichte.",
+    "Weiter so! Motivation ist trainierbar.",
   "💡 Fokus ist deine Superkraft!",
   "Yes! Wieder eine Einheit geschafft.",
   "Disziplin schlägt Talent – und du hast beides!",
@@ -137,16 +143,15 @@ const messages = [
   "Dein Ehrgeiz ist beeindruckend.",
   "Mit Fokus und Willen geht alles.",
   "Du bist der Held deiner Geschichte."
-  // ... weitere 50+ Nachrichten ...
 ];
 
+// Modus-Definitionen, ohne eigenen Modus, der ist Premium
 let modes = {
   pomodoro: { label: "Pomodoro", icon: "🍅", focus: 25, pause: 5 },
   deep: { label: "Deep Work", icon: "🧠", focus: 90, pause: 15 },
   light: { label: "Light Focus", icon: "🌤️", focus: 15, pause: 3 },
   sprint: { label: "Sprint", icon: "⚡", focus: 10, pause: 2 },
-  power: { label: "Power Hour", icon: "🔥", focus: 60, pause: 10 },
-  custom: { label: "Eigener Modus", icon: "⚙️", focus: 25, pause: 5 }
+  power: { label: "Power Hour", icon: "🔥", focus: 60, pause: 10 }
 };
 
 const modeDescriptions = {
@@ -154,18 +159,29 @@ const modeDescriptions = {
   deep: { suitableFor: "Perfekt für komplexe Projekte, wissenschaftliches Arbeiten oder Programmieren." },
   light: { suitableFor: "Gut für Lesen, Ideensammlung, Skizzen oder leichte Aufgaben." },
   sprint: { suitableFor: "Optimal für Mails, Aufgaben-Listen, kurze Recherchen oder Zwischenschritte." },
-  power: { suitableFor: "Geeignet für fokussierte Arbeit an einem Ziel ohne Unterbrechung." },
-  custom: { suitableFor: "Dein individuell konfigurierter Fokusmodus." }
+  power: { suitableFor: "Geeignet für fokussierte Arbeit an einem Ziel ohne Unterbrechung." }
 };
+
+// Wenn Premium, eigenen Modus hinzufügen
+if (isPremium) {
+  modes.custom = { label: "Eigener Modus", icon: "⚙️", focus: 25, pause: 5 };
+  modeDescriptions.custom = { suitableFor: "Dein individuell konfigurierter Fokusmodus." };
+}
 
 let settings = {
   sound: JSON.parse(localStorage.getItem("settingSound")) ?? true,
   vibration: JSON.parse(localStorage.getItem("settingVibration")) ?? true
 };
 
+function showAd() {
+  alert("Werbung: Bitte unterstütze die App mit Premium für werbefreies Arbeiten!");
+}
+
 function populateModeSelect() {
   modeSelect.innerHTML = "";
   for (const key in modes) {
+    if (key === "custom" && !isPremium) continue; // eigenen Modus nur für Premium
+
     const mode = modes[key];
     const times = `${mode.focus}/${mode.pause}`;
     const label = `${mode.icon} ${mode.label}`.padEnd(20, " ") + ` (${times})`;
@@ -174,11 +190,18 @@ function populateModeSelect() {
     option.textContent = label;
     modeSelect.appendChild(option);
   }
+  // Wenn nicht Premium, eigenen Modus als Hinweis hinzufügen
+  if (!isPremium) {
+    const option = document.createElement("option");
+    option.value = "custom";
+    option.textContent = "⚙️ Eigener Modus (Premium)";
+    modeSelect.appendChild(option);
+  }
 }
 
 function updateTimerDisplay() {
-  const mins = String(Math.floor(remaining / 60)).padStart(2, '0');
-  const secs = String(remaining % 60).padStart(2, '0');
+  const mins = String(Math.floor(remaining / 60)).padStart(2, "0");
+  const secs = String(remaining % 60).padStart(2, "0");
   timerDisplay.textContent = `${mins}:${secs}`;
 }
 
@@ -203,6 +226,12 @@ function showRandomMotivation() {
 function setMode() {
   const val = modeSelect.value;
 
+  if (val === "custom" && !isPremium) {
+    alert("Der eigene Modus ist nur in der Premiumversion verfügbar!");
+    modeSelect.value = "pomodoro";
+    return;
+  }
+
   if (val === "custom") {
     const label = prompt("Wie soll dein Modus heißen?");
     if (!label) return;
@@ -211,7 +240,6 @@ function setMode() {
     const pause = parseInt(prompt("Wie viele Minuten Pause?"));
     if (isNaN(focus) || isNaN(pause)) return;
 
-    // Eigenen Modus im Speicher ablegen
     modes["custom"] = {
       label: label,
       icon: "🛠️",
@@ -223,15 +251,15 @@ function setMode() {
       suitableFor: "Benutzerdefinierter Modus."
     };
 
-    populateModeSelect(); // Liste neu erstellen
-    modeSelect.value = "custom"; // Eigenen Modus aktiv setzen
+    populateModeSelect();
+    modeSelect.value = "custom";
   }
 
   const mode = modes[val];
 
   modeDescription.innerHTML = `
     <strong>${mode.icon} ${mode.label} – Fokus ${mode.focus} min / Pause ${mode.pause} min</strong><br />
-    <em>${modeDescriptions[val].suitableFor}</em>
+    <em>${modeDescriptions[val]?.suitableFor || ""}</em>
   `;
 
   focusSeconds = mode.focus * 60;
@@ -239,7 +267,6 @@ function setMode() {
 
   resetTimer();
 }
-
 
 function startTimer() {
   if (isRunning) return;
@@ -266,6 +293,11 @@ function startTimer() {
         let stats = JSON.parse(localStorage.getItem("stats")) || {};
         stats[today] = (stats[today] || 0) + Math.floor(focusSeconds / 60);
         localStorage.setItem("stats", JSON.stringify(stats));
+
+        // Werbung nach Fokus-Sitzung nur, wenn kein Premium
+        if (!isPremium) {
+          showAd();
+        }
 
         sessionType = "pause";
         remaining = pauseSeconds;
@@ -341,6 +373,12 @@ saveCustom.addEventListener("click", () => {
   const focus = parseInt(customFocus.value);
   const pause = parseInt(customPause.value);
 
+  if (!isPremium) {
+    alert("Eigene Modi sind nur in der Premiumversion verfügbar!");
+    customDialog.close();
+    return;
+  }
+
   if (name && focus > 0 && pause >= 0) {
     modes.custom = {
       label: name,
@@ -357,7 +395,22 @@ saveCustom.addEventListener("click", () => {
   customDialog.close();
 });
 
-// Event Listeners
+// Premium kaufen simulieren (für Demo)
+buyPremiumBtn?.addEventListener("click", () => {
+  if (confirm("Premium für 2,99€ kaufen und Werbung entfernen?")) {
+    isPremium = true;
+    localStorage.setItem("isPremium", "true");
+    alert("Danke für deinen Kauf! Die Werbung wurde deaktiviert.");
+    // Premium Features aktivieren
+    modes.custom = { label: "Eigener Modus", icon: "⚙️", focus: 25, pause: 5 };
+    modeDescriptions.custom = { suitableFor: "Dein individuell konfigurierter Fokusmodus." };
+    populateModeSelect();
+    modeSelect.value = "pomodoro";
+    setMode();
+  }
+});
+
+// Event Listener
 showStatsBtn.addEventListener("click", () => {
   statsContainer.style.display = statsContainer.style.display === "block" ? "none" : "block";
   if (statsContainer.style.display === "block") showStats();
@@ -391,10 +444,10 @@ setMode();
 updateTimerDisplay();
 updateXP();
 
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').then(() => {
-      console.log('Service Worker registriert');
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").then(() => {
+      console.log("Service Worker registriert");
     });
   });
 }
