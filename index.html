@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Focus Hero</title>
+
+  <!-- PWA: Manifest & Icons -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#1e1e1e" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Focus Hero">
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>
+  <img src="icons/icon-192.png" alt="Focus Hero Logo" style="height: 40px; vertical-align: middle; margin-right: 8px;">
+  Focus Hero
+</h1>
+
+    
+    <div class="timer-container">
+      <div id="timer">25:00</div>
+      <div id="status">Bereit</div>
+    </div>
+
+    <div class="button-group">
+      <button id="start">▶️ Start</button>
+      <button id="pause">⏸️ Pause</button>
+      <button id="reset">🔄 Reset</button>
+    </div>
+
+    <div class="mode-container">
+      <label for="mode">Modus wählen:</label>
+      <select id="mode"></select>
+      <div id="modeDescription" class="mode-description"></div>
+    </div>
+
+    <div id="motivation" class="motivation-text"></div>
+
+    <div class="progress-container">
+      <label>Level <span id="level">1</span></label>
+      <progress id="xpBar" value="0" max="100"></progress>
+      <div>XP: <span id="xp">0</span></div>
+      <div id="badge" class="badge"></div>
+    </div>
+
+    <!-- Menü-Buttons untereinander -->
+    <div class="menu-container">
+      <button id="showStats" class="menu-button">📊 Statistik</button>
+      <button id="showSettings" class="menu-button">⚙️ Einstellungen</button>
+    </div>
+
+    <!-- Statistik -->
+    <div id="statsContainer" class="panel" style="display: none;">
+      <h2>📈 Deine Statistik</h2>
+      <div id="statsOutput"></div>
+    </div>
+
+    <!-- Einstellungen -->
+    <div id="settingsContainer" class="panel" style="display: none;">
+      <h2>🔧 Einstellungen</h2>
+      <label><input type="checkbox" id="toggleSound" /> Ton am Ende</label><br />
+      <label><input type="checkbox" id="toggleVibration" /> Vibration am Ende</label>
+    </div>
+
+    <!-- Audio für Endsignal -->
+    <audio id="endSound" src="sounds/end.mp3" preload="auto"></audio>
+  </div>
+
+  <!-- Custom Mode Prompt -->
+  <dialog id="customModeDialog">
+    <form method="dialog">
+      <h3>🎯 Eigener Fokus-Modus</h3>
+      <label for="customName">Name:</label>
+      <input type="text" id="customName" required />
+      <label for="customFocus">Fokuszeit (Min):</label>
+      <input type="number" id="customFocus" min="1" required />
+      <label for="customPause">Pausenzeit (Min):</label>
+      <input type="number" id="customPause" min="1" required />
+      <menu>
+        <button id="cancelCustom" type="reset">Abbrechen</button>
+        <button id="saveCustom" type="submit">Speichern</button>
+      </menu>
+    </form>
+  </dialog>
+
+  <script src="script.js"></script>
+</body>
+</html>
